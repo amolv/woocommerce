@@ -73,25 +73,6 @@ class WC_REST_WCCOM_Site_Installer_Requirements_Check_Controller extends WC_REST
 	 * @return WP_REST_Response|mixed
 	 */
 	public function get_requirements_check( $request ) {
-		$passed = true;
-		$errors = array();
-
-		// Validate requirements check.
-		if ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) {
-			$passed   = false;
-			$errors[] = 'wp-cron';
-		}
-
-		if ( ! is_writable( WP_CONTENT_DIR ) ) {
-			$passed   = false;
-			$errors[] = 'writable';
-		}
-
-		return rest_ensure_response(
-			array(
-				'passed' => $passed,
-				'errors' => $errors,
-			)
-		);
+		return rest_ensure_response( WC_WCCOM_Site_Installer_Requirements_Check::get_requirement_check_response() );
 	}
 }
