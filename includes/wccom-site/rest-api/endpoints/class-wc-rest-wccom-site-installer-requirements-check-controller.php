@@ -42,11 +42,27 @@ class WC_REST_WCCOM_Site_Installer_Requirements_Check_Controller extends WC_REST
 			'/' . $this->rest_base,
 			array(
 				array(
-					'methods'  => WP_REST_Server::READABLE,
-					'callback' => array( $this, 'get_requirements_check' ),
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_requirements_check' ),
+					'permission_callback' => array( $this, 'check_permission' ),
 				),
 			)
 		);
+	}
+
+	/**
+	 * Check permissions.
+	 *
+	 * @since 3.7.1
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return bool|WP_Error
+	 */
+	public function check_permission( $request ) {
+		if ( ! current_user_can( 'install_plugins' ) || ! current_user_can( 'install_themes' ) ) {
+			return new WP_Error( 'woocommerce_rest_cannot_install_product', __( 'You do not have permission to install plugin or theme', 'woocommerce' ), array( 'status' => 401 ) );
+		}
+
+		return true;
 	}
 
 	/**
